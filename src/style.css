@@ -40,7 +40,7 @@ body {
 .card-body {
     color: #0c8e33;
 }
-.display-letter{
+.display-letter {
     text-transform: uppercase;
 }
 
@@ -60,4 +60,3 @@ body {
     color: #fff;
     border-radius: 0%;
 }
-

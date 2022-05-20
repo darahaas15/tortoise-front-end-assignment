@@ -14,6 +14,7 @@ let bestTime = document.querySelector('#best-time')
 
 const displayedLetter = document.querySelector('#displayed-letter')
 const timeDisplay = document.querySelector('#timer')
+const msDisplay = document.querySelector('#timer2')
 const letterInput = document.querySelector('#letter-input')
 const message = document.querySelector('#message')
 
@@ -48,12 +49,10 @@ const letters = [
 
 //Init game
 function init() {
-    for (let i = 0; i < 20; i++) {
-        showLetter(letters)
-    }
-    isPlaying = 0
+    showLetter(letters)
     letterInput.addEventListener('input', startMatching)
     setInterval(timer, 1000)
+    //check game status
 }
 
 function startMatching() {
@@ -64,7 +63,7 @@ function startMatching() {
             letterInput.value = ''
         }
     } else {
-        message.innerHTML = 'Try Again'
+        message.innerHTML = 'Try Again!'
         letterInput.value = ''
         time = time + 0.5
     }
@@ -87,4 +86,11 @@ function showLetter(letters) {
 function timer() {
     time++
     timeDisplay.innerHTML = time
+}
+
+function checkStatus() {
+    if (!isPlaying) {
+        message.innerHTML = 'Game Over'
+        clearInterval(isPlaying)
+    }
 }
