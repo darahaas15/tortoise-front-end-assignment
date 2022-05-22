@@ -9,8 +9,13 @@ window.addEventListener('load', init)
 // const seconds = document.querySelector('#seconds')
 // const highscoreDisplay = document.querySelector('#highscore')
 let time = 0
+let timerStart
+let startTimer = false
+let totalInputedLetters = 0
 let isPlaying
 let bestTime = document.querySelector('#best-time')
+let todayPlayed = {}
+let allTimeGamePlayed = []
 
 const displayedLetter = document.querySelector('#displayed-letter')
 const timeDisplay = document.querySelector('#timer')
@@ -49,18 +54,100 @@ const letters = [
 
 //Init game
 function init() {
+    let allTortoisePlayed = JSON.parse(
+        localStorage.getItem('allTortoisePlayed')
+    )
+    if (allTortoisePlayed != '' && allTortoisePlayed != null) {
+        let sortedInput = allTortoisePlayed
+            .slice()
+            .sort((a, b) => a.seconds - b.seconds)
+        document.getElementById('besttime').innerHTML =
+            sortedInput[0]['seconds']
+    } else document.getElementById('besttime').innerHTML = 0
     showLetter(letters)
     letterInput.addEventListener('input', startMatching)
-    setInterval(timer, 1000)
     //check game status
 }
-
+function checkLowestScore() {
+    let allTortoisePlayed = JSON.parse(
+        localStorage.getItem('allTortoisePlayed')
+    )
+    if (allTortoisePlayed != '' && allTortoisePlayed != null) {
+        let sortedInput = allTortoisePlayed
+            .slice()
+            .sort((a, b) => a.seconds - b.seconds)
+        if (sortedInput[0]['seconds'] >= timeDisplay.innerHTML) {
+            todayPlayed.seconds = timeDisplay.innerHTML
+            allTortoisePlayed.push(todayPlayed)
+            localStorage.setItem(
+                'allTortoisePlayed',
+                JSON.stringify(allTortoisePlayed)
+            )
+            allTortoisePlayed = JSON.parse(
+                localStorage.getItem('allTortoisePlayed')
+            )
+            allTortoisePlayed.sort(function (a, b) {
+                return b.seconds - a.seconds
+            })
+            document.getElementById('besttime').innerHTML =
+                sortedInput[0]['seconds']
+            displayedLetter.innerHTML = ''
+            displayedLetter.innerHTML = 'Success!'
+        } else {
+            message.innerHTML = ''
+            displayedLetter.innerHTML = ''
+            displayedLetter.innerHTML = 'Failed!'
+        }
+        document.getElementById('restart').style.display = 'block'
+        document
+            .getElementById('restartGame')
+            .addEventListener('click', function () {
+                location.reload()
+            })
+    } else {
+        todayPlayed.seconds = timeDisplay.innerHTML
+        allTimeGamePlayed.push(todayPlayed)
+        localStorage.setItem(
+            'allTortoisePlayed',
+            JSON.stringify(allTimeGamePlayed)
+        )
+        message.innerHTML = ''
+        displayedLetter.innerHTML = ''
+        displayedLetter.innerHTML = 'Success'
+        allTortoisePlayed = JSON.parse(
+            localStorage.getItem('allTortoisePlayed')
+        )
+        let sortedInput = allTortoisePlayed
+            .slice()
+            .sort((a, b) => a.seconds - b.seconds)
+        document.getElementById('besttime').innerHTML =
+            sortedInput[0]['seconds']
+        document.getElementById('restart').style.display = 'block'
+        document
+            .getElementById('restartGame')
+            .addEventListener('click', function () {
+                location.reload()
+            })
+    }
+}
 function startMatching() {
+    if (startTimer == false) {
+        timeStart = setInterval(timer, 1000)
+        startTimer = true
+    }
     if (matchLetters()) {
         if (letterInput.value === displayedLetter.innerHTML) {
-            message.innerHTML = 'Correct!'
-            showLetter(letters)
-            letterInput.value = ''
+            if (totalInputedLetters < 20) {
+                totalInputedLetters++
+                message.innerHTML = 'Correct!'
+                showLetter(letters)
+                letterInput.value = ''
+            }
+            if (totalInputedLetters == 20) {
+                clearInterval(timeStart)
+                letterInput.setAttribute('disabled', 'disabled')
+                checkLowestScore()
+            }
         }
     } else {
         message.innerHTML = 'Try Again!'

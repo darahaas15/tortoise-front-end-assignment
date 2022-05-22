@@ -15,7 +15,7 @@ body {
     font-weight: 400;
     padding-left: 10%;
     padding-right: 10%;
-    padding-top: 5%;
+    padding-top: 3%;
 }
 
 .third-text {
@@ -46,10 +46,10 @@ body {
 
 .input-group {
     max-width: 900px;
-    padding-top: 10%;
+    padding-top: 10px;
     padding-left: 10%;
     padding-right: 10%;
-    padding-bottom: 5%;
+    padding-bottom: 10px;
 }
 .form-control {
     background: #f9f2e8;
@@ -59,4 +59,7 @@ body {
     background: #f23f6d;
     color: #fff;
     border-radius: 0%;
+}
+#restart {
+    display: none;
 }
